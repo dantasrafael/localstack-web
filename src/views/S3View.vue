@@ -211,6 +211,7 @@ import {
   DeleteObjectCommand, 
   PutObjectCommand 
 } from '@aws-sdk/client-s3'
+import { formatDate } from '../utils/formatDate.js'
 
 const appStore = useAppStore()
 const { s3 } = storeToRefs(appStore)
@@ -368,10 +369,6 @@ const uploadFile = async () => {
   } finally {
     uploading.value = false
   }
-}
-
-const formatDate = (date) => {
-  return new Date(date).toLocaleString('pt-BR')
 }
 
 const formatBytes = (bytes) => {

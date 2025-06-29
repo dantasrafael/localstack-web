@@ -308,6 +308,7 @@ import {
   DecryptCommand, 
   ScheduleKeyDeletionCommand 
 } from '@aws-sdk/client-kms'
+import { formatDate } from '../utils/formatDate.js'
 
 const appStore = useAppStore()
 const { kms } = storeToRefs(appStore)
@@ -379,11 +380,6 @@ const getKeyStateColor = (state) => {
     case 'PendingImport': return 'info'
     default: return 'grey'
   }
-}
-
-const formatDate = (dateString) => {
-  if (!dateString) return 'N/A'
-  return new Date(dateString).toLocaleString('pt-BR')
 }
 
 // KMS API functions

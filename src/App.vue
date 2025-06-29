@@ -170,6 +170,7 @@ const menuItems = [
   { title: 'KMS Keys', icon: 'mdi-key', to: '/kms' },
   { title: 'Lambda Functions', icon: 'mdi-function', to: '/lambda' },
   { title: 'S3 Buckets', icon: 'mdi-folder-multiple', to: '/s3' },
+  { title: 'SES Emails', icon: 'mdi-email-multiple', to: '/ses' },
   { title: 'SNS Topics', icon: 'mdi-forum', to: '/sns' },
   { title: 'SQS Queues', icon: 'mdi-format-list-bulleted', to: '/sqs' },
 ]

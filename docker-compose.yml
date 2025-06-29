@@ -8,7 +8,7 @@ services:
       - "127.0.0.1:4566:4566"            # LocalStack Edge Proxy
     environment:
       - DEBUG=${DEBUG:-0}
-      - SERVICES=sns,sqs,s3,lambda,dynamodb,kinesis,kms
+      - SERVICES=sns,sqs,s3,ses,lambda,dynamodb,kinesis,kms
       - DISABLE_CORS_CHECKS=1
       - DISABLE_CORS_HANDLERS=1
       - SKIP_CORS_PREFLIGHT=1

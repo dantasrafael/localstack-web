@@ -301,6 +301,7 @@ import {
   GetShardIteratorCommand, 
   GetRecordsCommand 
 } from '@aws-sdk/client-kinesis'
+import { formatDate } from '../utils/formatDate.js'
 
 const appStore = useAppStore()
 const { kinesis } = storeToRefs(appStore)
@@ -509,10 +510,6 @@ const getStatusColor = (status) => {
     case 'UPDATING': return 'info'
     default: return 'grey'
   }
-}
-
-const formatDate = (date) => {
-  return new Date(date).toLocaleString('pt-BR')
 }
 
 const decodeData = (data) => {

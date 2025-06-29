@@ -185,7 +185,7 @@
                 <div class="d-flex justify-space-between align-center w-100">
                   <span>Mensagem {{ index + 1 }}</span>
                   <v-chip size="small" color="info">
-                    {{ formatDate(message.Attributes?.SentTimestamp) }}
+                    {{ parseAndFormatDate(message.Attributes?.SentTimestamp) }}
                   </v-chip>
                 </div>
               </v-expansion-panel-title>
@@ -278,6 +278,7 @@ import {
   SendMessageCommand, 
   DeleteMessageCommand 
 } from '@aws-sdk/client-sqs'
+import { formatDate } from '@/utils/formatDate.js'
 
 const appStore = useAppStore()
 const { sqs } = storeToRefs(appStore)
@@ -484,9 +485,9 @@ const deleteMessage = async (message) => {
   }
 }
 
-const formatDate = (timestamp) => {
+const parseAndFormatDate = (timestamp) => {
   if (!timestamp) return 'N/A'
-  return new Date(parseInt(timestamp)).toLocaleString('pt-BR')
+  return formatDate(parseInt(timestamp))
 }
 
 onMounted(() => {

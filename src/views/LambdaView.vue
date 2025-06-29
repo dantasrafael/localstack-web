@@ -659,10 +659,6 @@ const getStateColor = (state) => {
   }
 }
 
-const formatDate = (date) => {
-  return new Date(date).toLocaleString('pt-BR')
-}
-
 const decodeLogs = (logResult) => {
   try {
     return atob(logResult)

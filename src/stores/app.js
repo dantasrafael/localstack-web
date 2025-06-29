@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { S3Client } from '@aws-sdk/client-s3'
+import { SESClient} from '@aws-sdk/client-ses'
 import { SNSClient } from '@aws-sdk/client-sns'
 import { SQSClient } from '@aws-sdk/client-sqs'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
@@ -35,6 +36,7 @@ export const useAppStore = defineStore('app', () => {
 
   // Initialize AWS services
   const s3 = ref(null)
+  const ses = ref(null)
   const sns = ref(null)
   const sqs = ref(null)
   const dynamodb = ref(null)
@@ -53,6 +55,7 @@ export const useAppStore = defineStore('app', () => {
     }
     
     s3.value = new S3Client(config)
+    ses.value = new SESClient(config)
     sns.value = new SNSClient(config)
     sqs.value = new SQSClient(config)
     dynamodb.value = new DynamoDBClient(config)
@@ -106,6 +109,7 @@ export const useAppStore = defineStore('app', () => {
     connectionStatus,
     snackbar,
     s3,
+    ses,
     sns,
     sqs,
     dynamodb,

@@ -304,6 +304,7 @@ import {
   DeleteItemCommand, 
   PutItemCommand 
 } from '@aws-sdk/client-dynamodb'
+import { formatDate } from '../utils/formatDate.js'
 
 const appStore = useAppStore()
 const { dynamodb } = storeToRefs(appStore)
@@ -620,10 +621,6 @@ const getStatusColor = (status) => {
     case 'UPDATING': return 'info'
     default: return 'grey'
   }
-}
-
-const formatDate = (date) => {
-  return new Date(date).toLocaleString('pt-BR')
 }
 
 const formatBytes = (bytes) => {

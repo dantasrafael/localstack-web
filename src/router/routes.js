@@ -7,6 +7,7 @@ import KinesisView from '@/views/KinesisView.vue'
 import SNSView from '@/views/SNSView.vue'
 import KMSView from '@/views/KMSView.vue'
 import AboutView from '@/views/AboutView.vue'
+import SESView from '@/views/SESView.vue'
 
 export default [
   {
@@ -18,6 +19,11 @@ export default [
     path: '/s3',
     name: 'S3',
     component: S3View
+  },
+  {
+    path: '/ses',
+    name: 'SES',
+    component: SESView
   },
   {
     path: '/sqs',

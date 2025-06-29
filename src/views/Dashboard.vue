@@ -15,7 +15,7 @@
           :color="service.status === 'active' ? 'primary' : 'grey-lighten-2'"
           :variant="service.status === 'active' ? 'elevated' : 'outlined'"
           class="pa-4"
-          height="120"
+          height="150"
           @click="service.status === 'active' ? navigateToService(service.route): null"
           style="cursor: pointer"
         >
@@ -127,10 +127,12 @@ import { ListFunctionsCommand } from '@aws-sdk/client-lambda'
 import { ListBucketsCommand, ListObjectsV2Command, DeleteObjectsCommand, DeleteBucketCommand } from '@aws-sdk/client-s3'
 import { ListTopicsCommand } from '@aws-sdk/client-sns'
 import { ListQueuesCommand, DeleteQueueCommand } from '@aws-sdk/client-sqs'
+import { ListIdentitiesCommand } from '@aws-sdk/client-ses'
+import { deleteSesMessage, getSesData } from '@/utils/api.js'
 
 const router = useRouter()
 const appStore = useAppStore()
-const { s3, sns, sqs, dynamodb, lambda, kinesis, kms } = storeToRefs(appStore)
+const { s3, ses, sns, sqs, dynamodb, lambda, kinesis, kms } = storeToRefs(appStore)
 
 const services = ref([
   {
@@ -165,6 +167,13 @@ const services = ref([
     name: 'S3',
     icon: 'mdi-folder-multiple',
     route: '/s3',
+    status: 'inactive',
+    stats: null
+  },
+  {
+    name: 'SES',
+    icon: 'mdi-email',
+    route: '/ses',
     status: 'inactive',
     stats: null
   },
@@ -204,6 +213,13 @@ const quickActions = ref([
     icon: 'mdi-table-remove',
     color: 'orange',
     action: 'clearDynamoDB',
+    loading: false
+  },
+  {
+    title: 'Limpar SES',
+    icon: 'mdi-email-remove',
+    color: 'error',
+    action: 'clearSES',
     loading: false
   },
   {
@@ -290,28 +306,42 @@ const loadServiceStats = async () => {
       services.value[4].status = 'inactive'
     }
 
+    // SES Stats
+    try {
+      const sesIdentities = await ses.value.send(new ListIdentitiesCommand({ IdentityType: 'EmailAddress' }))
+      const sesData = await getSesData();
+      services.value[5].status = 'active'
+      services.value[5].stats = {
+        'E-mails': sesData.messages ? sesData.messages.length : 0,
+        'Identidades': sesIdentities.Identities ? sesIdentities.Identities.length : 0
+      }
+    } catch (error) {
+      console.error('SES error:', error)
+      services.value[5].status = 'inactive'
+    }
+
     // SNS Stats
     try {
       const snsTopics = await sns.value.send(new ListTopicsCommand({}))
-      services.value[5].status = 'active'
-      services.value[5].stats = {
+      services.value[6].status = 'active'
+      services.value[6].stats = {
         'Tópicos': snsTopics.Topics ? snsTopics.Topics.length : 0
       }
     } catch (error) {
       console.error('SNS error:', error)
-      services.value[5].status = 'inactive'
+      services.value[6].status = 'inactive'
     }
 
     // SQS Stats
     try {
       const sqsQueues = await sqs.value.send(new ListQueuesCommand({}))
-      services.value[6].status = 'active'
-      services.value[6].stats = {
+      services.value[7].status = 'active'
+      services.value[7].stats = {
         'Filas': sqsQueues.QueueUrls ? sqsQueues.QueueUrls.length : 0
       }
     } catch (error) {
       console.error('SQS error:', error)
-      services.value[6].status = 'inactive'
+      services.value[7].status = 'inactive'
     }
 
   } catch (error) {
@@ -344,6 +374,11 @@ const executeQuickAction = (action) => {
       text = 'Esta ação irá deletar todas as filas SQS. Deseja continuar?'
       color = 'warning'
       break
+    case 'clearSES':
+      title = 'Limpar todos os emails SES'
+      text = 'Esta ação irá deletar todos os emails do SES. Deseja continuar?'
+      color = 'error'
+      break
     case 'clearDynamoDB':
       title = 'Limpar todas as tabelas DynamoDB'
       text = 'Esta ação irá deletar todas as tabelas DynamoDB. Deseja continuar?'
@@ -372,6 +407,9 @@ const performClearAction = async (action) => {
         break
       case 'clearSQS':
         await clearAllSQSQueues()
+        break
+      case 'clearSES':
+        await clearAllSESData()
         break
       case 'clearDynamoDB':
         await clearAllDynamoDBTables()
@@ -420,6 +458,10 @@ const clearAllSQSQueues = async () => {
       await sqs.value.send(new DeleteQueueCommand({ QueueUrl: queueUrl }))
     }
   }
+}
+
+const clearAllSESData = async () => {
+  await deleteSesMessage()
 }
 
 const clearAllDynamoDBTables = async () => {
